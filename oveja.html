@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Ovejitas</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f3f3;
+      color: #333;
+    }
+
+    .header {
+      background: #4587c3;
+      color: white;
+      padding: 28px 22px 10px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .header .sub {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .contenedor {
+      max-width: 760px;
+      margin: 24px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+      padding: 22px;
+    }
+
+    .grupo {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cfcfcf;
+      border-radius: 7px;
+      font-size: 14px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    input[readonly] {
+      background: #f8f8f8;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .botones {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      border: none;
+      border-radius: 7px;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .guardar { background: #4587c3; color: white; }
+    .limpiar { background: #6c757d; color: white; }
+
+    .mensaje {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 7px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .mensaje.ok {
+      display: block;
+      background: #e8f5e9;
+      color: #256029;
+      border: 1px solid #b7dfba;
+    }
+
+    .mensaje.error {
+      display: block;
+      background: #fdecea;
+      color: #a12622;
+      border: 1px solid #f5c2c0;
+    }
+
+    .fila-info {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #555;
+      font-weight: bold;
+    }
+
+    .ayuda {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contenedor {
+        margin: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>CONTROL DE OVEJITAS</h1>
+    <div class="sub">TURNO # 4</div>
+  </div>
+
+  <div class="contenedor">
+    <form id="formOvejas">
+      <input type="hidden" id="filaRegistro" value="">
+
+      <div class="fila-info" id="filaInfo">Modo: nuevo registro</div>
+
+      <div class="grupo">
+        <label for="nombre">Nombre de la persona</label>
+        <input type="text" id="nombre" required>
+      </div>
+
+      <div class="grid">
+        <div class="grupo">
+          <label for="fechaVisita">Fecha de visita</label>
+          <input type="date" id="fechaVisita" required>
+        </div>
+
+        <div class="grupo">
+          <label for="telefono">Teléfono</label>
+          <input type="text" id="telefono" required>
+          <div class="ayuda">Al salir de este campo se buscará automáticamente.</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="grupo">
+          <label for="tipo">Tipo de registro</label>
+          <select id="tipo" required>
+            <option value="">Seleccione</option>
+            <option value="Visita">Visita</option>
+            <option value="Aceptó">Aceptó</option>
+            <option value="Reconciliación">Reconciliación</option>
+          </select>
+        </div>
+
+        <div class="grupo">
+          <label for="lider">Líder responsable</label>
+          <input type="text" id="lider">
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="grupo">
+          <label for="fechaAsignacion">Fecha de asignación</label>
+          <input type="date" id="fechaAsignacion">
+        </div>
+
+        <div class="grupo">
+          <label for="fechaSeguimiento">Fecha de seguimiento</label>
+          <input type="date" id="fechaSeguimiento">
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="grupo">
+          <label for="estado">Estado actual</label>
+          <select id="estado">
+            <option value="">Seleccione</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En seguimiento">En seguimiento</option>
+            <option value="Integrado">Integrado</option>
+            <option value="No responde">No responde</option>
+            <option value="Asiste">Asiste</option>
+            <option value="No continuó">No continuó</option>
+          </select>
+        </div>
+
+        <div class="grupo">
+          <label for="turno">Turno</label>
+          <input type="text" id="turno" value="TURNO # 4" readonly>
+        </div>
+      </div>
+
+      <div class="grupo">
+        <label for="peticiones">Peticiones o necesidad</label>
+        <textarea id="peticiones"></textarea>
+      </div>
+
+      <div class="botones">
+        <button type="submit" class="guardar">Guardar / Actualizar</button>
+        <button type="button" class="limpiar" onclick="limpiarFormulario()">Limpiar</button>
+      </div>
+
+      <div id="mensaje" class="mensaje"></div>
+    </form>
+  </div>
+
+  <script>
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzKdVh5cP2vYW_5nODXnLhsV0xW9tLBc6ybD07g_81hObpkdQmmZduLl1OwX9Pv2CT4/exec";
+    const form = document.getElementById("formOvejas");
+    const mensaje = document.getElementById("mensaje");
+    const filaInfo = document.getElementById("filaInfo");
+    const telefonoInput = document.getElementById("telefono");
+
+    let ultimoTelefonoBuscado = "";
+
+    telefonoInput.addEventListener("blur", async function() {
+      const telefono = telefonoInput.value.trim();
+      if (!telefono) return;
+      if (telefono === ultimoTelefonoBuscado) return;
+
+      ultimoTelefonoBuscado = telefono;
+      await buscarPorTelefonoAutomatico(telefono);
+    });
+
+    async function buscarPorTelefonoAutomatico(telefono) {
+      mostrarMensaje("Buscando por teléfono...", "ok");
+
+      try {
+        const json = await enviarDatos({
+          accion: "buscar",
+          telefono: telefono
+        });
+
+        if (json.ok && json.encontrado) {
+          cargarFormulario(json.datos);
+          document.getElementById("filaRegistro").value = json.fila || "";
+          filaInfo.textContent = "Modo: editando fila " + json.fila;
+          mostrarMensaje("Persona encontrada. Se cargaron todos los datos.", "ok");
+        } else if (json.ok && !json.encontrado) {
+          document.getElementById("filaRegistro").value = "";
+          const telefonoActual = telefonoInput.value.trim();
+          limpiarCamposDatos();
+          document.getElementById("telefono").value = telefonoActual;
+          filaInfo.textContent = "Modo: nuevo registro";
+          mostrarMensaje("No existe ese teléfono. Puedes crear un nuevo registro.", "error");
+        } else {
+          mostrarMensaje("Error en búsqueda: " + (json.error || "desconocido"), "error");
+        }
+      } catch (error) {
+        mostrarMensaje("No se pudo conectar con Apps Script. Detalle: " + error.message, "error");
+      }
+    }
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const datos = {
+        accion: "guardar",
+        nombre: document.getElementById("nombre").value.trim(),
+        fechaVisita: document.getElementById("fechaVisita").value,
+        telefono: document.getElementById("telefono").value.trim(),
+        tipo: document.getElementById("tipo").value,
+        lider: document.getElementById("lider").value.trim(),
+        fechaAsignacion: document.getElementById("fechaAsignacion").value,
+        fechaSeguimiento: document.getElementById("fechaSeguimiento").value,
+        estado: document.getElementById("estado").value,
+        peticiones: document.getElementById("peticiones").value.trim(),
+        turno: document.getElementById("turno").value
+      };
+
+      if (!datos.nombre) {
+        mostrarMensaje("El nombre es obligatorio.", "error");
+        return;
+      }
+
+      if (!datos.telefono) {
+        mostrarMensaje("El teléfono es obligatorio.", "error");
+        return;
+      }
+
+      mostrarMensaje("Guardando...", "ok");
+
+      try {
+        const json = await enviarDatos(datos);
+
+        if (json.ok) {
+          document.getElementById("filaRegistro").value = json.fila || "";
+          cargarFormulario(json.datos || datos);
+          filaInfo.textContent = "Modo: editando fila " + json.fila;
+          ultimoTelefonoBuscado = json.datos?.telefono || datos.telefono;
+
+          if (json.actualizado) {
+            mostrarMensaje("Registro actualizado correctamente en la fila " + json.fila + ".", "ok");
+          } else {
+            mostrarMensaje("Nuevo registro guardado correctamente en la fila " + json.fila + ".", "ok");
+          }
+        } else {
+          mostrarMensaje("Error al guardar: " + (json.error || "desconocido"), "error");
+        }
+      } catch (error) {
+        mostrarMensaje("No se pudo conectar con Apps Script. Detalle: " + error.message, "error");
+      }
+    });
+
+    async function enviarDatos(datos) {
+      const respuesta = await fetch(URL_SCRIPT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(datos)
+      });
+
+      const texto = await respuesta.text();
+
+      try {
+        return JSON.parse(texto);
+      } catch {
+        throw new Error("La respuesta no es JSON válido: " + texto);
+      }
+    }
+
+    function cargarFormulario(d) {
+      document.getElementById("nombre").value = d.nombre || "";
+      document.getElementById("fechaVisita").value = d.fechaVisita || "";
+      document.getElementById("telefono").value = d.telefono || "";
+      document.getElementById("tipo").value = d.tipo || "";
+      document.getElementById("lider").value = d.lider || "";
+      document.getElementById("fechaAsignacion").value = d.fechaAsignacion || "";
+      document.getElementById("fechaSeguimiento").value = d.fechaSeguimiento || "";
+      document.getElementById("estado").value = d.estado || "";
+      document.getElementById("peticiones").value = d.peticiones || "";
+      document.getElementById("turno").value = "TURNO # 4";
+    }
+
+    function limpiarFormulario() {
+      form.reset();
+      document.getElementById("filaRegistro").value = "";
+      document.getElementById("turno").value = "TURNO # 4";
+      filaInfo.textContent = "Modo: nuevo registro";
+      ultimoTelefonoBuscado = "";
+      ocultarMensaje();
+    }
+
+    function limpiarCamposDatos() {
+      document.getElementById("nombre").value = "";
+      document.getElementById("fechaVisita").value = "";
+      document.getElementById("tipo").value = "";
+      document.getElementById("lider").value = "";
+      document.getElementById("fechaAsignacion").value = "";
+      document.getElementById("fechaSeguimiento").value = "";
+      document.getElementById("estado").value = "";
+      document.getElementById("peticiones").value = "";
+      document.getElementById("turno").value = "TURNO # 4";
+    }
+
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className = "mensaje " + tipo;
+      mensaje.style.display = "block";
+    }
+
+    function ocultarMensaje() {
+      mensaje.textContent = "";
+      mensaje.className = "mensaje";
+      mensaje.style.display = "none";
+    }
+  </script>
+</body>
+</html>
